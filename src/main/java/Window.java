@@ -1,8 +1,6 @@
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GLUtil;
 
 public class Window {
     static int width = 800;
@@ -41,7 +39,7 @@ public class Window {
         GLFW.glfwMakeContextCurrent(window);
         GL.createCapabilities();
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-        //GLFW.glfwSwapInterval(0);
+        GLFW.glfwSwapInterval(0);
 
         GL11.glOrtho(0, width, height, 0, 1, -1);
 

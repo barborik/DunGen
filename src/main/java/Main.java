@@ -1,5 +1,4 @@
 import element.entity.Player;
-import org.lwjgl.system.CallbackI;
 
 public class Main {
     public static void main(String[] args) {

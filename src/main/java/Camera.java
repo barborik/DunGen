@@ -48,7 +48,7 @@ public class Camera {
                     GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 
                     GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, map.wallSize * map.map[y * map.mapX + x]);
-                    GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, map.wallSize, map.wallSize, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, map.tileSet);
+                    GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, map.wallSize, map.wallSize, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, map.tileset.tileSet);
 
                     GL11.glBegin(GL11.GL_QUADS);
 
@@ -80,7 +80,14 @@ public class Camera {
         float rayX = 0, rayY = 0, rayAngle, xOff = 0, yOff = 0, finalDistance = 0;
         int mapIndex = 0;
         for (int ray = 0; ray < Window.width; ray++) { // the visibility cone
-            rayAngle = player.getViewAngle() - (float) Math.toRadians(fov) / 2 + (float) Math.toRadians(fov) * ray / Window.width;
+
+            //rayAngle = player.getViewAngle() - (float) Math.toRadians(fov) / 2 + (float) Math.toRadians(fov) * ray / Window.width;
+            /*
+            spent a whole evening figuring out the line below, gonna leave the line above there and nicely commented for my stupid future self
+            https://stackoverflow.com/questions/24173966/raycasting-engine-rendering-creating-slight-distortion-increasing-towards-edges
+            */
+            rayAngle = (float) Math.atan((ray - Window.width / 2f) / (1 / Math.tan(Math.toRadians(fov / 2f)) * Window.width / 2)) + player.getViewAngle();
+
             if (rayAngle < 0) rayAngle += 2 * Math.PI;
             if (rayAngle > 2 * Math.PI) rayAngle -= 2 * Math.PI;
 
@@ -169,17 +176,48 @@ public class Camera {
                 finalDistance = horizontal;
             }
 
-            // DRAW (PSEUDO) 3D!1!1!1!1!1!1!
-            double lineHeight = (map.wallSize * Window.height) / (finalDistance * (float) Math.cos(rayAngle - player.getViewAngle()));
-            double lineOff = (Window.height / 2f) - (lineHeight / 2); // fix fisheye effect
+            // final calculation of mapIndex
+            try {
+                mapIndex = map.map[((int) rayY / map.wallSize) * map.mapX + ((int) rayX / map.wallSize)];
+            } catch (ArrayIndexOutOfBoundsException ignored) {
+                mapIndex = 0;
+            }
 
-            GL11.glColor3f(0.3f, 0.3f, 0.3f);
+            // DRAW (PSEUDO) 3D!1!1!1!1!1!1!
+            double lineHeight = (map.wallSize * Window.height) / (finalDistance * (float) Math.cos(rayAngle - player.getViewAngle())); // line height with fisheye correction
+            double lineOff = (Window.height / 2f) - (lineHeight / 2);
+
+            // calculate column and flip texture
+            int xTexture;
+            if (horizontal < vertical) {
+                xTexture = (int) (rayX % map.wallSize);
+                if (rayAngle > Math.PI) xTexture = map.wallSize - 1 - xTexture;
+            } else {
+                xTexture = (int) (rayY % map.wallSize);
+                if (rayAngle > Math.PI / 2 && rayAngle < 3 * Math.PI / 2) xTexture = map.wallSize - 1 - xTexture;
+            }
+
+            GL11.glColor3f(1, 1, 1);
             GL11.glBegin(GL11.GL_QUADS);
+            GL11.glTexCoord2f(mapIndex / (float) (map.tileset.tileSetWidth / map.wallSize) + xTexture / (float) map.tileset.tileSetWidth, 0);
             GL11.glVertex2d(ray, lineOff);
+
+            GL11.glTexCoord2f(mapIndex / (float) (map.tileset.tileSetWidth / map.wallSize) + 1 / (float) map.tileset.tileSetWidth + xTexture / (float) map.tileset.tileSetWidth, 0);
             GL11.glVertex2d(ray + 1, lineOff);
+
+            GL11.glTexCoord2f(mapIndex / (float) (map.tileset.tileSetWidth / map.wallSize) + 1 / (float) map.tileset.tileSetWidth + xTexture / (float) map.tileset.tileSetWidth, 1);
             GL11.glVertex2d(ray + 1, lineHeight + lineOff);
+
+            GL11.glTexCoord2f(mapIndex / (float) (map.tileset.tileSetWidth / map.wallSize) + xTexture / (float) map.tileset.tileSetWidth, 1);
             GL11.glVertex2d(ray, lineHeight + lineOff);
             GL11.glEnd();
+
+            //  draw visibility cone
+            /*GL11.glColor3f(1, 1, 1);
+            GL11.glBegin(GL11.GL_LINES);
+            GL11.glVertex2d(player.getPosX(), player.getPosY());
+            GL11.glVertex2d(rayX, rayY);
+            GL11.glEnd();*/
         }
     }
 
