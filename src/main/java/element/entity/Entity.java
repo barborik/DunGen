@@ -1,8 +1,11 @@
 package element.entity;
 
+import util.Collider;
+
 public class Entity {
+    public Collider collider;
     protected float posX, posY, viewAngle = 0;
-    protected int health;
+    protected int health, speed, size;
 
     public float getPosX() {
         return posX;
@@ -36,6 +39,22 @@ public class Entity {
         this.health = health;
     }
 
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
     public Entity() {
     }
 
@@ -43,5 +62,6 @@ public class Entity {
         this.posX = posX;
         this.posY = posY;
         this.viewAngle = viewAngle;
+        this.collider = new Collider(this);
     }
 }

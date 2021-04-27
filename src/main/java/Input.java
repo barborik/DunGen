@@ -15,20 +15,16 @@ public class Input {
         dY = Math.sin(player.getViewAngle());
 
         if (GLFW.glfwGetKey(Window.window, GLFW.GLFW_KEY_W) == GLFW.GLFW_TRUE) {
-            player.setPosX((float) (player.getPosX() + (dX * Window.frameTime * 200)));
-            player.setPosY((float) (player.getPosY() + (dY * Window.frameTime * 200)));
+            player.collider.checkCollision((float) (dX * Window.frameTime * player.getSpeed()), (float) (dY * Window.frameTime * player.getSpeed()));
         }
         if (GLFW.glfwGetKey(Window.window, GLFW.GLFW_KEY_S) == GLFW.GLFW_TRUE) {
-            player.setPosX((float) (player.getPosX() - (dX * Window.frameTime * 200)));
-            player.setPosY((float) (player.getPosY() - (dY * Window.frameTime * 200)));
+            player.collider.checkCollision((float) (-dX * Window.frameTime * player.getSpeed()), (float) (-dY * Window.frameTime * player.getSpeed()));
         }
         if (GLFW.glfwGetKey(Window.window, GLFW.GLFW_KEY_A) == GLFW.GLFW_TRUE) {
-            player.setPosX((float) (player.getPosX() - Math.cos(player.getViewAngle() + Math.PI / 2) * Window.frameTime * 200));
-            player.setPosY((float) (player.getPosY() - Math.sin(player.getViewAngle() + Math.PI / 2) * Window.frameTime * 200));
+            player.collider.checkCollision((float) (-Math.cos(player.getViewAngle() + Math.PI / 2) * Window.frameTime * player.getSpeed()), (float) (-Math.sin(player.getViewAngle() + Math.PI / 2) * Window.frameTime * player.getSpeed()));
         }
         if (GLFW.glfwGetKey(Window.window, GLFW.GLFW_KEY_D) == GLFW.GLFW_TRUE) {
-            player.setPosX((float) (player.getPosX() + Math.cos(player.getViewAngle() + Math.PI / 2) * Window.frameTime * 200));
-            player.setPosY((float) (player.getPosY() + Math.sin(player.getViewAngle() + Math.PI / 2) * Window.frameTime * 200));
+            player.collider.checkCollision((float) (Math.cos(player.getViewAngle() + Math.PI / 2) * Window.frameTime * player.getSpeed()), (float) (Math.sin(player.getViewAngle() + Math.PI / 2) * Window.frameTime * player.getSpeed()));
         }
 
         // mouse

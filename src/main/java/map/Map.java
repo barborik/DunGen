@@ -1,9 +1,11 @@
+package map;
+
 import util.Texture;
 
 public class Map {
-    Texture tileset;
-    public int mapX = 8, mapY = 8, wallSize = 64;
-    public int[] map = {
+    public static Texture tileset;
+    public static int mapX = 8, mapY = 8, wallSize = 64;
+    public static int[] map = {
             4, 4, 4, 4, 2, 3, 4, 4,
             4, 0, 0, 4, 0, 0, 0, 4,
             4, 0, 0, 4, 0, 0, 0, 5,

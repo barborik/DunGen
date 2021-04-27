@@ -1,14 +1,10 @@
 import element.entity.Player;
+import map.Map;
 import org.lwjgl.opengl.GL11;
 
 public class Camera {
     private final Player player;
-    private Map map;
     static int fov = 70;
-
-    public void setMap(Map map) {
-        this.map = map;
-    }
 
     public void debugDrawing() {
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
@@ -36,19 +32,19 @@ public class Camera {
         // draw map
         int xOff;
         int yOff;
-        for (int y = 0; y < map.mapY; y++) {
-            for (int x = 0; x < map.mapX; x++) {
-                xOff = x * map.wallSize;
-                yOff = y * map.wallSize;
+        for (int y = 0; y < Map.mapY; y++) {
+            for (int x = 0; x < Map.mapX; x++) {
+                xOff = x * Map.wallSize;
+                yOff = y * Map.wallSize;
 
-                if (map.map[y * map.mapX + x] != 0) {
+                if (Map.map[y * Map.mapX + x] != 0) {
                     GL11.glColor3f(1, 1, 1);
 
                     GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
                     GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 
-                    GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, map.wallSize * map.map[y * map.mapX + x]);
-                    GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, map.wallSize, map.wallSize, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, map.tileset.tileSet);
+                    GL11.glPixelStorei(GL11.GL_UNPACK_SKIP_PIXELS, Map.wallSize * Map.map[y * Map.mapX + x]);
+                    GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, Map.wallSize, Map.wallSize, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, Map.tileset.tileSet);
 
                     GL11.glBegin(GL11.GL_QUADS);
 
@@ -56,13 +52,13 @@ public class Camera {
                     GL11.glVertex2i(xOff, yOff);
 
                     GL11.glTexCoord2f(1, 0);
-                    GL11.glVertex2i(xOff + map.wallSize, yOff);
+                    GL11.glVertex2i(xOff + Map.wallSize, yOff);
 
                     GL11.glTexCoord2f(1, 1);
-                    GL11.glVertex2i(xOff + map.wallSize, yOff + map.wallSize);
+                    GL11.glVertex2i(xOff + Map.wallSize, yOff + Map.wallSize);
 
                     GL11.glTexCoord2f(0, 1);
-                    GL11.glVertex2i(xOff, yOff + map.wallSize);
+                    GL11.glVertex2i(xOff, yOff + Map.wallSize);
 
                     GL11.glEnd();
                 }
@@ -95,23 +91,23 @@ public class Camera {
             float rayTan = (float) Math.tan(-rayAngle), vertical, verticalX, verticalY;
 
             if (rayAngle > Math.PI / 2 && rayAngle < 3 * Math.PI / 2) { // looking left
-                rayX = player.getPosX() - (player.getPosX() % map.wallSize) - 0.01f;
+                rayX = player.getPosX() - (player.getPosX() % Map.wallSize) - 0.01f;
                 // we need to subtract that small number there so the ray isn't directly at the cross section
-                rayY = rayTan * (player.getPosX() % map.wallSize) + player.getPosY();
-                xOff = -64;
+                rayY = rayTan * (player.getPosX() % Map.wallSize) + player.getPosY();
+                xOff = -Map.wallSize;
                 yOff = -xOff * rayTan;
             }
 
             if (rayAngle > 3 * Math.PI / 2 || rayAngle < Math.PI / 2) { // looking right
-                rayX = player.getPosX() + (map.wallSize - player.getPosX() % map.wallSize);
-                rayY = -rayTan * (map.wallSize - player.getPosX() % map.wallSize) + player.getPosY();
-                xOff = 64;
+                rayX = player.getPosX() + (Map.wallSize - player.getPosX() % Map.wallSize);
+                rayY = -rayTan * (Map.wallSize - player.getPosX() % Map.wallSize) + player.getPosY();
+                xOff = Map.wallSize;
                 yOff = -xOff * rayTan;
             }
 
-            for (int i = 0; i < map.mapX + map.mapY; i++) { // add offsets until the ray hits a wall
+            for (int i = 0; i < Map.mapX + Map.mapY; i++) { // add offsets until the ray hits a wall
                 try {
-                    mapIndex = map.map[((int) rayY / map.wallSize) * map.mapX + ((int) rayX / map.wallSize)];
+                    mapIndex = Map.map[((int) rayY / Map.wallSize) * Map.mapX + ((int) rayX / Map.wallSize)];
                 } catch (ArrayIndexOutOfBoundsException ignored) {
                     mapIndex = 0;
                 }
@@ -131,23 +127,23 @@ public class Camera {
             float rayCot = (float) (-1 / Math.tan(rayAngle)), horizontal, horizontalX, horizontalY;
 
             if (rayAngle > Math.PI) { // looking up
-                rayX = rayCot * (player.getPosY() % map.wallSize) + player.getPosX();
-                rayY = player.getPosY() - (player.getPosY() % map.wallSize) - 0.01f;
+                rayX = rayCot * (player.getPosY() % Map.wallSize) + player.getPosX();
+                rayY = player.getPosY() - (player.getPosY() % Map.wallSize) - 0.01f;
                 // we need to subtract that small number there so the ray isn't directly at the cross section
-                yOff = -64;
+                yOff = -Map.wallSize;
                 xOff = -yOff * rayCot;
             }
 
             if (rayAngle < Math.PI) { // looking down
-                rayX = -rayCot * (map.wallSize - player.getPosY() % map.wallSize) + player.getPosX();
-                rayY = player.getPosY() + (map.wallSize - player.getPosY() % map.wallSize);
-                yOff = 64;
+                rayX = -rayCot * (Map.wallSize - player.getPosY() % Map.wallSize) + player.getPosX();
+                rayY = player.getPosY() + (Map.wallSize - player.getPosY() % Map.wallSize);
+                yOff = Map.wallSize;
                 xOff = -yOff * rayCot;
             }
 
-            for (int i = 0; i < map.mapX + map.mapY; i++) { // add offsets until the ray hits a wall
+            for (int i = 0; i < Map.mapX + Map.mapY; i++) { // add offsets until the ray hits a wall
                 try {
-                    mapIndex = map.map[((int) rayY / map.wallSize) * map.mapX + ((int) rayX / map.wallSize)];
+                    mapIndex = Map.map[((int) rayY / Map.wallSize) * Map.mapX + ((int) rayX / Map.wallSize)];
                 } catch (ArrayIndexOutOfBoundsException ignored) {
                     mapIndex = 0;
                 }
@@ -178,37 +174,37 @@ public class Camera {
 
             // final calculation of mapIndex
             try {
-                mapIndex = map.map[((int) rayY / map.wallSize) * map.mapX + ((int) rayX / map.wallSize)];
+                mapIndex = Map.map[((int) rayY / Map.wallSize) * Map.mapX + ((int) rayX / Map.wallSize)];
             } catch (ArrayIndexOutOfBoundsException ignored) {
                 mapIndex = 0;
             }
 
             // DRAW (PSEUDO) 3D!1!1!1!1!1!1!
-            double lineHeight = (map.wallSize * Window.height) / (finalDistance * (float) Math.cos(rayAngle - player.getViewAngle())); // line height with fisheye correction
+            double lineHeight = (Map.wallSize * Window.height) / (finalDistance * (float) Math.cos(rayAngle - player.getViewAngle())); // line height with fisheye correction
             double lineOff = (Window.height / 2f) - (lineHeight / 2);
 
             // calculate column and flip texture
             int xTexture;
             if (horizontal < vertical) {
-                xTexture = (int) (rayX % map.wallSize);
-                if (rayAngle > Math.PI) xTexture = map.wallSize - 1 - xTexture;
+                xTexture = (int) (rayX % Map.wallSize);
+                if (rayAngle > Math.PI) xTexture = Map.wallSize - 1 - xTexture;
             } else {
-                xTexture = (int) (rayY % map.wallSize);
-                if (rayAngle > Math.PI / 2 && rayAngle < 3 * Math.PI / 2) xTexture = map.wallSize - 1 - xTexture;
+                xTexture = (int) (rayY % Map.wallSize);
+                if (rayAngle > Math.PI / 2 && rayAngle < 3 * Math.PI / 2) xTexture = Map.wallSize - 1 - xTexture;
             }
 
             GL11.glColor3f(1, 1, 1);
             GL11.glBegin(GL11.GL_QUADS);
-            GL11.glTexCoord2f(mapIndex / (float) (map.tileset.tileSetWidth / map.wallSize) + xTexture / (float) map.tileset.tileSetWidth, 0);
+            GL11.glTexCoord2f(mapIndex / (float) (Map.tileset.tileSetWidth / Map.wallSize) + xTexture / (float) Map.tileset.tileSetWidth, 0);
             GL11.glVertex2d(ray, lineOff);
 
-            GL11.glTexCoord2f(mapIndex / (float) (map.tileset.tileSetWidth / map.wallSize) + 1 / (float) map.tileset.tileSetWidth + xTexture / (float) map.tileset.tileSetWidth, 0);
+            GL11.glTexCoord2f(mapIndex / (float) (Map.tileset.tileSetWidth / Map.wallSize) + 1 / (float) Map.tileset.tileSetWidth + xTexture / (float) Map.tileset.tileSetWidth, 0);
             GL11.glVertex2d(ray + 1, lineOff);
 
-            GL11.glTexCoord2f(mapIndex / (float) (map.tileset.tileSetWidth / map.wallSize) + 1 / (float) map.tileset.tileSetWidth + xTexture / (float) map.tileset.tileSetWidth, 1);
+            GL11.glTexCoord2f(mapIndex / (float) (Map.tileset.tileSetWidth / Map.wallSize) + 1 / (float) Map.tileset.tileSetWidth + xTexture / (float) Map.tileset.tileSetWidth, 1);
             GL11.glVertex2d(ray + 1, lineHeight + lineOff);
 
-            GL11.glTexCoord2f(mapIndex / (float) (map.tileset.tileSetWidth / map.wallSize) + xTexture / (float) map.tileset.tileSetWidth, 1);
+            GL11.glTexCoord2f(mapIndex / (float) (Map.tileset.tileSetWidth / Map.wallSize) + xTexture / (float) Map.tileset.tileSetWidth, 1);
             GL11.glVertex2d(ray, lineHeight + lineOff);
             GL11.glEnd();
 
@@ -221,8 +217,7 @@ public class Camera {
         }
     }
 
-    public Camera(Player player, Map map) {
+    public Camera(Player player) {
         this.player = player;
-        this.map = map;
     }
 }

@@ -4,5 +4,7 @@ public class Player extends Entity {
     public Player(float posX, float posY, float viewAngle) {
         super(posX, posY, viewAngle);
         super.setHealth(100);
+        super.setSpeed(200);
+        super.setSize(10);
     }
 }
