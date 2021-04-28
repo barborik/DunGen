@@ -4,7 +4,7 @@ import element.entity.Entity;
 import map.Map;
 
 public class Collider {
-    Entity entity;
+    private final Entity entity;
 
     private int getOperator(double num) {
         if (num > 0) return 1;
@@ -12,17 +12,13 @@ public class Collider {
         return 0;
     }
 
-    public void checkCollision(float moveXOff, float moveYOff) {
+    public void checkCollision(double moveXOff, double moveYOff) {
         try {
-            int gridPosX = (int) (entity.getPosX() / Map.wallSize), gridMoveX = (int) ((entity.getPosX() + entity.getSize() * getOperator(moveXOff)) / Map.wallSize);
-            int gridPosY = (int) (entity.getPosY() / Map.wallSize), gridMoveY = (int) ((entity.getPosY() + entity.getSize() * getOperator(moveYOff)) / Map.wallSize);
+            int gridPosX = (int) (entity.posX / Map.wallSize), gridMoveX = (int) ((entity.posX + entity.size * Map.wallSize * getOperator(moveXOff)) / Map.wallSize);
+            int gridPosY = (int) (entity.posY / Map.wallSize), gridMoveY = (int) ((entity.posY + entity.size * Map.wallSize * getOperator(moveYOff)) / Map.wallSize);
 
-            if (Map.map[gridPosY * Map.mapX + gridMoveX] == 0) {
-                entity.setPosX(entity.getPosX() + moveXOff);
-            }
-            if (Map.map[gridMoveY * Map.mapX + gridPosX] == 0) {
-                entity.setPosY(entity.getPosY() + moveYOff);
-            }
+            if (Map.map[gridPosY * Map.mapX + gridMoveX] == 0) entity.posX += moveXOff;
+            if (Map.map[gridMoveY * Map.mapX + gridPosX] == 0) entity.posY += moveYOff;
         } catch (ArrayIndexOutOfBoundsException ignored) {
         }
     }

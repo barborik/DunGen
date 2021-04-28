@@ -1,6 +1,11 @@
 package map;
 
+import element.Element;
+import element.entity.Duke;
+import element.entity.Troll;
 import util.Texture;
+
+import java.util.ArrayList;
 
 public class Map {
     public static Texture tileset;
@@ -15,8 +20,11 @@ public class Map {
             2, 0, 0, 0, 0, 0, 0, 3,
             4, 5, 4, 1, 1, 1, 1, 4,
     };
+    public static ArrayList<Element> elements = new ArrayList<>();
 
     public Map() {
         tileset = new Texture("tile_set.bmp");
+        elements.add(new Troll(300, 400, 0));
+        elements.add(new Duke(300, 200, 0));
     }
 }

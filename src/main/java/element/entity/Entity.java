@@ -1,66 +1,37 @@
 package element.entity;
 
+import element.Element;
 import util.Collider;
 
-public class Entity {
+public class Entity extends Element {
     public Collider collider;
-    protected float posX, posY, viewAngle = 0;
-    protected int health, speed, size;
+    public int speed;
+    protected double viewAngle;
+    protected int health;
 
-    public float getPosX() {
-        return posX;
-    }
-
-    public float getPosY() {
-        return posY;
-    }
-
-    public float getViewAngle() {
+    public double getViewAngle() {
         return viewAngle;
+    }
+
+    public void setViewAngle(double viewAngle) {
+        this.viewAngle = viewAngle;
+        if (this.viewAngle > 2 * Math.PI) this.viewAngle -= 2 * Math.PI;
+        if (this.viewAngle < 0) this.viewAngle += 2 * Math.PI;
     }
 
     public int getHealth() {
         return health;
     }
 
-    public void setPosX(float posX) {
-        this.posX = posX;
-    }
-
-    public void setPosY(float posY) {
-        this.posY = posY;
-    }
-
-    public void setViewAngle(float viewAngle) {
-        this.viewAngle = viewAngle;
-    }
-
     public void setHealth(int health) {
         this.health = health;
-    }
-
-    public int getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
     }
 
     public Entity() {
     }
 
-    public Entity(float posX, float posY, float viewAngle) {
-        this.posX = posX;
-        this.posY = posY;
+    public Entity(double posX, double posY, double viewAngle) {
+        super(posX, posY);
         this.viewAngle = viewAngle;
         this.collider = new Collider(this);
     }

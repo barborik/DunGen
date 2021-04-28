@@ -13,27 +13,32 @@ public class Input {
     public void move() {
         dX = Math.cos(player.getViewAngle());
         dY = Math.sin(player.getViewAngle());
+        double moveX = 0, moveY = 0;
 
         if (GLFW.glfwGetKey(Window.window, GLFW.GLFW_KEY_W) == GLFW.GLFW_TRUE) {
-            player.collider.checkCollision((float) (dX * Window.frameTime * player.getSpeed()), (float) (dY * Window.frameTime * player.getSpeed()));
+            moveX += dX * Window.frameTime * player.speed;
+            moveY += dY * Window.frameTime * player.speed;
         }
         if (GLFW.glfwGetKey(Window.window, GLFW.GLFW_KEY_S) == GLFW.GLFW_TRUE) {
-            player.collider.checkCollision((float) (-dX * Window.frameTime * player.getSpeed()), (float) (-dY * Window.frameTime * player.getSpeed()));
+            moveX -= dX * Window.frameTime * player.speed;
+            moveY -= dY * Window.frameTime * player.speed;
         }
         if (GLFW.glfwGetKey(Window.window, GLFW.GLFW_KEY_A) == GLFW.GLFW_TRUE) {
-            player.collider.checkCollision((float) (-Math.cos(player.getViewAngle() + Math.PI / 2) * Window.frameTime * player.getSpeed()), (float) (-Math.sin(player.getViewAngle() + Math.PI / 2) * Window.frameTime * player.getSpeed()));
+            moveX -= Math.cos(player.getViewAngle() + Math.PI / 2) * Window.frameTime * player.speed;
+            moveY -= Math.sin(player.getViewAngle() + Math.PI / 2) * Window.frameTime * player.speed;
         }
         if (GLFW.glfwGetKey(Window.window, GLFW.GLFW_KEY_D) == GLFW.GLFW_TRUE) {
-            player.collider.checkCollision((float) (Math.cos(player.getViewAngle() + Math.PI / 2) * Window.frameTime * player.getSpeed()), (float) (Math.sin(player.getViewAngle() + Math.PI / 2) * Window.frameTime * player.getSpeed()));
+            moveX += Math.cos(player.getViewAngle() + Math.PI / 2) * Window.frameTime * player.speed;
+            moveY += Math.sin(player.getViewAngle() + Math.PI / 2) * Window.frameTime * player.speed;
         }
+
+        player.collider.checkCollision(moveX, moveY);
 
         // mouse
         GLFW.glfwGetCursorPos(Window.window, mouseX, mouseY);
         mouseX.rewind();
         mouseY.rewind();
-        player.setViewAngle((float) (player.getViewAngle() + (mouseX.get(0) - (Window.width / 2.0)) / Window.width));
-        if (player.getViewAngle() > 2 * Math.PI) player.setViewAngle((float) (player.getViewAngle() - 2 * Math.PI));
-        if (player.getViewAngle() < 0) player.setViewAngle((float) (player.getViewAngle() + 2 * Math.PI));
+        player.setViewAngle((player.getViewAngle() + (mouseX.get(0) - (Window.width / 2.0)) / Window.width));
     }
 
     public Input(Player player) {

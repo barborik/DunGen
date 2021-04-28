@@ -13,10 +13,9 @@ public class Main {
         while (window.windowUpdate()) {
             System.out.println(1 / Window.frameTime);
 
-            //camera.debugDrawing();
-            camera.castRays();
             input.move();
-
+            //camera.debugDrawing();
+            camera.render();
         }
     }
 }
