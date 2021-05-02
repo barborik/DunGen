@@ -4,6 +4,7 @@ import element.entity.Player;
 import map.Map;
 import org.lwjgl.opengl.GL11;
 import util.CameraUtil;
+import util.Debug;
 
 public class Camera {
     private final Player player;
@@ -205,6 +206,7 @@ public class Camera {
     public void render() {
         castRays();
         drawSprites();
+        //Debug.debugDrawing(player);
     }
 
     public Camera(Player player) {
