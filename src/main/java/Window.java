@@ -4,11 +4,12 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
 public class Window {
-    static int width = 800;
-    static int height = 600;
+    static int width = 640;
+    static int height = 360;
     static long window;
     static double frameTime;
     private long startFrameTime;
+    static GLFWVidMode vidMode;
 
     public boolean windowUpdate() {
         GLFW.glfwSetCursorPos(Window.window, Window.width / 2.0, Window.height / 2.0);
@@ -26,16 +27,13 @@ public class Window {
             System.exit(0);
         }
 
-        /*GLFWVidMode vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
-        width = vidMode.width();
-        height = vidMode.height();*/
+        vidMode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor());
 
         GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_FALSE);
-        window = GLFW.glfwCreateWindow(width, height, "DunGen", 0, 0);
+        window = GLFW.glfwCreateWindow(vidMode.width(), vidMode.height(), "DunGen", 0, 0);
         GLFW.glfwShowWindow(window);
 
-
-        //GLFW.glfwSetWindowMonitor(window, 0, 0, 0, width, height, vidMode.refreshRate());
+        GLFW.glfwSetWindowMonitor(window, 0, 0, 0, vidMode.width(), vidMode.height(), vidMode.refreshRate());
 
         GLFW.glfwMakeContextCurrent(window);
         GL.createCapabilities();

@@ -12,13 +12,20 @@ public class CameraUtil {
     }
 
     public static void sortElements(Player player) {
-        Map.elements.sort(new Comparator<Element>() {
-            @Override
-            public int compare(Element element1, Element element2) {
-                double dist1 = rayLength(player.posX, player.posY, element1.posX, element1.posY);
-                double dist2 = rayLength(player.posX, player.posY, element2.posX, element2.posY);
-                return Double.compare(dist2, dist1);
-            }
+        Map.elements.sort((element1, element2) -> {
+            double dist1 = rayLength(player.posX, player.posY, element1.posX, element1.posY);
+            double dist2 = rayLength(player.posX, player.posY, element2.posX, element2.posY);
+            return Double.compare(dist2, dist1);
         });
+    }
+
+    public static double fixAngle(double angle) {
+        if (angle > 2 * Math.PI - 0.01) angle -= 2 * Math.PI;
+        if (angle < 0) angle += 2 * Math.PI;
+        return angle;
+    }
+
+    public static int unsignedToByte(byte b) {
+        return b & 0xFF;
     }
 }

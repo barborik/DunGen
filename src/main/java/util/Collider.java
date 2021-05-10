@@ -14,8 +14,8 @@ public class Collider {
 
     public void checkCollision(double moveXOff, double moveYOff) {
         try {
-            int gridPosX = (int) (entity.posX / Map.wallSize), gridMoveX = (int) ((entity.posX + entity.size * Map.wallSize * getOperator(moveXOff)) / Map.wallSize);
-            int gridPosY = (int) (entity.posY / Map.wallSize), gridMoveY = (int) ((entity.posY + entity.size * Map.wallSize * getOperator(moveYOff)) / Map.wallSize);
+            int gridPosX = (int) (entity.posX / Map.wallSize), gridMoveX = (int) ((entity.posX + entity.sizeX / 2 * Map.wallSize * getOperator(moveXOff)) / Map.wallSize);
+            int gridPosY = (int) (entity.posY / Map.wallSize), gridMoveY = (int) ((entity.posY + entity.sizeX / 2 * Map.wallSize * getOperator(moveYOff)) / Map.wallSize);
 
             if (Map.map[gridPosY * Map.mapX + gridMoveX] == 0) entity.posX += moveXOff;
             if (Map.map[gridMoveY * Map.mapX + gridPosX] == 0) entity.posY += moveYOff;
